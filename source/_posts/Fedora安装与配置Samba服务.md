@@ -44,6 +44,13 @@ randnum: fedora-samba
   `firewall-cmd --zone=public --add-rich-rule='rule family="ipv4" source address=192.168.0.0/24 port port=139 protocol=tcp --accept' --permanent`
   `firewall-cmd --zone=public --add-rich-rule='rule family="ipv4" source address=192.168.0.0/24 port port=445 protocol=tcp --accept' --permanent`
   `firewall-cmd --reload`
+  - 添加SELinux配置
+```
+setsebool -P samba_export_all_ro=1 samba_export_all_rw=1
+getsebool –a | grep samba_export
+semanage fcontext –at samba_share_t "/finance(/.*)?"
+restorecon /finance
+```
   - 启动samba服务
   `systemctl start smb.service`
   `systemctl enable smb.service`
@@ -55,5 +62,6 @@ smbclient -L server_ip -U user_name
 # 以FTP的方式的登陆
 smbclient '//ip/share' -U user_name
 # 以网络磁盘的方式挂载
-mount -t cifs //ip/share /mnt -o username=user,password=passwd
+mount -t cifs //ip/share /mnt -o username=user,password=passwd,vers=1.0
+*如果出现不能挂载的情况，需要指定vers版本号为1.0*
 ```
