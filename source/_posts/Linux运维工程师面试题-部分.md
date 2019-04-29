@@ -87,7 +87,7 @@ do
 	echo "user${i} :${user_passwd}" >> /home/kim/user_passwd.txt
 done
 ```
-- echo 在输出变量还有其他字符时，需要使用双引号`""`,如果输出的内容需要调用其他命令还需要使用字符````
+- echo 在输出变量还有其他字符时，需要使用双引号`""`,如果输出的内容需要调用其他命令还需要使用字符
 - seq格式化`%02g`保留2位，不足位用0补充
 - 使用判断符号`[]`要注意左右的空格
 - 标准输出和标准错误输出`2>&1`
@@ -108,29 +108,29 @@ done
 umask代表创建文件或目录的默认权限，计算方式为777分别减去umask的值	，umask022代表创建文件或目录的默认权限为755,即u为rwx，g为rx，o为rx
 15. 查看某个进程/用户打开的文件
 ```
-# 1个或多个进程打开的文件
-## 根据进程名
+\# 1个或多个进程打开的文件
+\## 根据进程名
 lsof -c process
 lsof | grep process
 lsof -c process1 -c process2 
-## 根据进程号
+\## 根据进程号
 lsof -p pid,pid1,pid2
-# 用户打开的文件
+\# 用户打开的文件
 lsof -u user
-# 除用户user外打开的文件
+\# 除用户user外打开的文件
 lsof -u ^user
-# 查看正在使用文件
+\# 查看正在使用文件
 lsof /path/filename
-# 查看网络信息
-## tcp
+\# 查看网络信息
+\## tcp
 lsof -i tcp
-## udp
+\## udp
 lsof -i udp
-## 端口号
+\## 端口号
 lsof -i:1080
-## 使用端口号的tcp
+\## 使用端口号的tcp
 lsof -i tcp:1080
-## 用户的所有活跃的网络端口
+\## 用户的所有活跃的网络端口
 lsof -a -u user -i 
 ```
 16. 常用服务的端口号

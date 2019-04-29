@@ -31,3 +31,34 @@ randnum: hexo-backup-git
  git commit -m "backup"
  git push origin master
  ```
+## 使用脚本定时备份和更新
+```
+#!/bin/bash
+# env
+our_home=/home/kim/Documents/kim1024.github.io
+backup_home=/home/kim/Documents/hexo
+now_date=`date "+%Y%m%d"`
+# test log file exist or not
+[ !-e /home/kim/tmp/git_update.log ] || rm -f /home/kim/tmp/git_update.log
+#copy file from our_home to backup_home
+cp -r ${our_home}/* ${backup_home}/
+# push update to github
+cd ${backup_home}
+git add . > /home/kim/tmp/git_update.log 2>&1
+git commit -m "${now_date}" >> /home/kim/tmp/git_update.log 2>&1
+git push origin master >> /home/kim/tmp/git_update.log 2>&1
+```
+将脚本文件命为`update_git.sh`,添加执行权限`chmod u+x update_git.sh`,添加到用户的crontab定时执行中:
+```
+# 打开crontab
+crontab -e
+# 添加任务计划,每周五11点执行
+0 11 * * 5 /home/kim/tmp/update_git.sh
+# 保存文件
+:wq!
+# 查看用户crontab计划
+crontab -l
+# 删除当前的任务计划
+crontab -e
+删除文件中的所有计划
+```
