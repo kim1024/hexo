@@ -58,6 +58,11 @@ randnum: centos-kvm
   - 在创建完成虚拟机后，会出现`Permission denied` 的错误提示，常规的解决方法有以下几个方法：
 	1. 关闭selinux
 	  - `vi /etc/selinux` /# 将selinux设置为permissive或disabled
+	  - 如果在启用SELinux下使用kvm，则需要将存放VM Disk的路径添加到SELinux中，具体执行以下命令：
+	  ```
+	  semanage fcontext -a -t virt_image_t "/paht/disk(/.*)?"
+	  restorecon /paht/disk
+	  ```
 	2. 将用户添加到kvm用户组中
 	  - `usermod -a -G libvirt username`
 	  - `usermod -a -G kvm username`
@@ -70,3 +75,4 @@ randnum: centos-kvm
 
 ## 参考
 1. <https://www.cyberciti.biz/faq/how-to-install-kvm-on-centos-7-rhel-7-headless-server/>
+2. [SELINUX AND VIRTUALIZATIONs](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/5/html/virtualization/sect-virtualization-security_for_virtualization-selinux_and_virtualization)

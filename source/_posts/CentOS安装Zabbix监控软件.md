@@ -63,6 +63,9 @@ getsebool -a | grep zabbix
 setsebool -P zabbix_can_network=1
 setsebool -P httpd_can_connect_zabbix=1
 setsebool -P zabbix_run_sudo=1
+# 如果使用了远程数据库还需要进行以下设置
+setsebool -P httpd_can_network_connect=1
+setsebool -P httpd_can_network_connect_db=1
 ```
 7. 启动Zabbix服务
 `sudo systemctl start zabbix-server zabbix-agent httpd`
@@ -72,6 +75,10 @@ setsebool -P zabbix_run_sudo=1
 使用tar打包压缩，并使用openssl des3 -salt密码加密->[install_zabbix_shell.tar.gz](https://drive.google.com/file/d/1-e6jgPYNzPVDzb_EhReFGALW9C3ptWZg/view?usp=sharing)
 加密压缩：`tar -czvf - install_zabbix.sh zabbix.sql | openssl des3 -salt -k passwd -out install_zabbix_shell.tar.gz`
 加密解压：`openssl des3 -d -k passwd -salt -in install_zabbix_shell.tar.gz | tar xzf -`
+10. 最新数据中，监控条目出现“no data”
+如果Zabbix Agent使用的是主动模式，监控模板使用的是默认的Linux系统监控模板，那么我们需要clone一个模板，并将clone后的模板中的**type**修改为**zabbix agent(acvite)**,这样就可以接收到数据。
+![nodata](https://s2.ax1x.com/2019/05/09/EgVR3R.png)
+![Zabbix Agent Active](https://s2.ax1x.com/2019/05/09/Egmfvn.png)
 
 ## 参考
 
