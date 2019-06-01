@@ -26,30 +26,31 @@ randnum: fedora-samba
 	security=USER
 	passdb backend=tdbsam
 	lanman auth=yes
-	ntlm auth=yes	#xp使用samba需要开启以上2个认证
-	hosts allow=192.168.0. 	# 仅允许192.168.0.0/24网段的用户访问
+	ntlm auth=yes	
+	hosts allow=192.168.0.
 [share]
 	comment=home
 	path=/path
 	browseable=yes
-	writetable=yes
+	writeable=yes
 	writelist=user1,@group1
 	create mode=0644
-	director mode=0755
+	directory mode=0755
 ```
   - 测试配置文件`testparm`
   - 将系统中的用户添加到samba中
   `pdbedit -a -u user`
   - 添加防火墙规则
-  `firewall-cmd --zone=public --add-rich-rule='rule family="ipv4" source address=192.168.0.0/24 port port=139 protocol=tcp --accept' --permanent`
-  `firewall-cmd --zone=public --add-rich-rule='rule family="ipv4" source address=192.168.0.0/24 port port=445 protocol=tcp --accept' --permanent`
+  `firewall-cmd --zone=public --add-rich-rule='rule family="ipv4" source address=192.168.0.0/24 port port=139 protocol=tcp accept' --permanent`
+  `firewall-cmd --zone=public --add-rich-rule='rule family="ipv4" source address=192.168.0.0/24 port port=445 protocol=tcp accept' --permanent`
   `firewall-cmd --reload`
   - 添加SELinux配置
 ```
+su root
 setsebool -P samba_export_all_ro=1 samba_export_all_rw=1
 getsebool –a | grep samba_export
-semanage fcontext –at samba_share_t "/finance(/.*)?"
-restorecon /finance
+semanage fcontext –at samba_share_t "/home/user/path(/.*)?"
+restorecon /home/user/path
 ```
   - 启动samba服务
   `systemctl start smb.service`
