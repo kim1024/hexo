@@ -12,6 +12,8 @@ randnum: kvm-cmd
 # KVM 维护常用命令
 
 - kvm虚拟机的配置文件位置：`/etc/libvirt/qemu`
+- 查看虚拟机的配置情况
+`sudo virsh dominfo vm_name`
 - 修改虚拟机的相关配置
   - `sudo virsh edit virt_host_name`
 - 备份虚拟机的配置文件
@@ -53,4 +55,10 @@ randnum: kvm-cmd
     - `sudo snapshot-revert virt_host snapshot_name`
   - 删除快照
     - `sudo virsh snapshot-delete virt_host snapshot_name`
-
+- 添加网卡
+  - live添加,重启不失效
+  `sudo virsh attach-interface --domain vm1 --type bridge --source br1 --model virtio --config --live`
+  - 重启后生效
+  `sudo virsh attach-interface --domain vm1 --type bridge --source br1 --model virtio --config`
+- 删除网卡
+`sudo virsh detach-interface --domain vm1 --type bridge `
