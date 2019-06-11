@@ -12,6 +12,7 @@ randnum: openstack-install-glance
 
 镜像服务glance允许用户发现、注册和获取虚拟镜像。它提供一个RESETAPI允许查询虚拟机镜像的metadata并获取一个现存的镜像。
 
+<!--more-->
 ## 安装和配置
 
 ### 安装条件
@@ -26,7 +27,6 @@ create database glance;
 grant all privileges on glance.* to 'glc_db'@'localhost' identified by 'passwd';
 grant all privileges on glance.* to 'glc_db'@'192.168.122.%' identified by 'passwd';
 ```
-<!--more-->
 2. 获得admin凭证获取只有管理员才能执行的命令的权限
 `. admin-openrc`
 3. 创建服务证书
@@ -61,7 +61,6 @@ openstack endpoint create \
 --region RegionOne \
 image admin http://ops-cont:9292
 ```
-![OpenStack-create-endpoint-api](https://s2.ax1x.com/2019/06/08/VByNVI.png)
 
 ### 安装配置组件
 
@@ -94,7 +93,7 @@ flavor=keystone
 [glance_store]
 stores=file,http
 default_store=file
-filesystem_store_datadir=/var/lib/glance/images
+filesystem_store_datadir=/var/lib/glance/images/
 ```
 3. 配置`glance-registry.conf`
 ```
@@ -105,7 +104,7 @@ connection=mysql+pymysql://glc_db:db_passwd@opc-cont/glance
 # configure auth in [keystone_token] and [paste-deploy]
 [keystone_authtoken]
 # add
-auth_url=http://ops-cont:5000
+auth_uri=http://ops-cont:5000
 auth_url=http://ops-cont:35357
 memcached_servers=ops-cont:11211
 auth_type=password
@@ -124,6 +123,24 @@ flavor=keystone
 systemctl start openstack-glance-api openstack-glance-registry
 systemctl enable openstack-glance-api openstack-glance-registry
 ```
+## 验证服务
+
+1. 获得admin凭证
+`. admin-openrc`
+2. 下载cirros镜像
+`wget https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img cirros040.img`
+将下载的镜像移动到`/var/lib/glance/images`
+3. 使用qcow2格式，bare容器格式上传镜像到镜像服务并设置公共可见
+```
+openstack image create "cirros" \
+--file cirros040.img \
+--disk-format qcow2 \
+--container-format bare \
+--public
+```
+![OpenStack-create-image](https://s2.ax1x.com/2019/06/10/VyROr6.png)
+4. 查看镜像属性
+`openstack image list`
 
 ## 参考
 
